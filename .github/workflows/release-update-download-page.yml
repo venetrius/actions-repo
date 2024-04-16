@@ -50,8 +50,6 @@ jobs:
           releaseDate: ${{ inputs.date }}
         shell: bash
         run: |
-          set -xe
-
           minorVersion=$(echo $nextVersion | cut -c1-4)
           branchVar="    - branch: \"$minorVersion\""
           header="    - branch: \"$minorVersion\"
@@ -59,7 +57,7 @@ jobs:
           "
           filePath="$GITHUB_WORKSPACE/camunda-docs-static/enterprise/content/download.md"
           input_content=$(cat "$filePath")
-
+          echo "read file"
           if [[ "$input_content" == *"$branchVar"* ]]; then
             echo "this is a problem!"
             lineNumber=$(grep -n -m1 "releases:" $filePath | cut -d: -f1)
