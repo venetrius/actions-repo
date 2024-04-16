@@ -71,6 +71,7 @@ jobs:
           fi
           
           filePath="$GITHUB_WORKSPACE/camunda-docs-static/enterprise/content/download.md"
+          echo $(grep "node:" $filePath)
           input_content=$(cat "$filePath")
           extracted_section=$(echo "$input_content" | awk '/releases:/{flag=1; next} flag && /^$/ {exit} flag')
           
