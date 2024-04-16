@@ -43,7 +43,7 @@ jobs:
           repository: venetrius/docs-repo
           token: ${{ secrets.GITHUB_TOKEN }}
           path: camunda-docs-static
-          ref: ${{ inputs.ref }} # github.job_workflow_sha seems to be the documented parameter to resolve this, but doesn't
+          # ref: ${{ inputs.ref }} # github.job_workflow_sha seems to be the documented parameter to resolve this, but doesn't
       - name: Update Download Page
         env:
           minorVersion: ${{ inputs.version }}
