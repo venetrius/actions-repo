@@ -85,8 +85,8 @@ jobs:
         env:
           DRI: ${{ inputs.DRI }}
           GH_TOKEN: "updateMe" 
+        shell: bash
         run: |
-          #!/bin/bash
           # expected env vars: 
           # GITHUB_WORKSPACE 'The github workplace'
           # GH_TOKEN 'Personal access token used by github cli'
