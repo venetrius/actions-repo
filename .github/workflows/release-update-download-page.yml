@@ -101,6 +101,8 @@ jobs:
               exit 1
           fi
 
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
           # Create a new feature branch, commit and push
           git checkout -b $BRANCH_NAME
           git add .
