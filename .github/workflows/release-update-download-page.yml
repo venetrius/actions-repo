@@ -55,6 +55,7 @@ jobs:
           # releaseDate 'The release date'
           echo $(pwd)
           echo "$GITHUB_WORKSPACE/camunda-docs-static/enterprise/content/download.md"
+          echo $(ls)
           minorVersion=$(echo $nextVersion | cut -c1-4)
           branchVar="    - branch: \"$minorVersion\""
           header="    - branch: \"$minorVersion\"
@@ -98,7 +99,7 @@ jobs:
           # DRI 'DRI of the release'
 
           BRANCH_NAME="update-docs-for-alpha-release"
-          REPO_DIR=$GITHUB_WORKSPACE"camunda-docs-static"
+          REPO_DIR=$GITHUB_WORKSPACE"/camunda-docs-static"
 
           cd $REPO_DIR
           if [ "$(pwd)" != "$REPO_DIR" ]; then
