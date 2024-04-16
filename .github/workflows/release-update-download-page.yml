@@ -53,7 +53,8 @@ jobs:
           # expected env vars: 
           # minorVersion 'The version of the alpha release'
           # releaseDate 'The release date'
-          
+          echo $(pwd)
+          echo "$GITHUB_WORKSPACE/camunda-docs-static/enterprise/content/download.md"
           minorVersion=$(echo $nextVersion | cut -c1-4)
           branchVar="    - branch: \"$minorVersion\""
           header="    - branch: \"$minorVersion\"
