@@ -48,7 +48,7 @@ jobs:
         id: release-create-pr
         uses: camunda/automation-platform-github-actions/release-update-download-page@innovation-week-alpha-update-download-page
         with:
-          version: ${{ input.version }}
+          version: ${{ inputs.version }}
           date: ${{ inputs.date }}
           DRI: ${{ inputs.DRI }}
           GITHUB_TOKEN: "updateMe" # ${{ steps.generate-github-token.outputs.token }}
