@@ -58,6 +58,7 @@ jobs:
                 releases:
           "
           filePath="$GITHUB_WORKSPACE/camunda-docs-static/enterprise/content/download.md"
+          input_content=$(cat "$filePath")
 
           if [[ "$input_content" == *"$branchVar"* ]]; then
             echo "this is a problem!"
@@ -67,7 +68,7 @@ jobs:
             lineNumber=$(grep -n -m1 'branches:' $filePath | cut -d: -f1)
           fi
           
-          input_content=$(cat "$filePath")
+
           extracted_section=$(echo "$input_content" | awk '/releases:/{flag=1; next} flag && /^$/ {exit} flag')
           
           # White spaces are important for indentation
