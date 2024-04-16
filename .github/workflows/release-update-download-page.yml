@@ -87,7 +87,6 @@ jobs:
           rm "$temp_file"
       - name: Update Download Page and Create PR for alpha release
         env:
-          GITHUB_WORKSPACE: ${{GITHUB_WORKSPACE}}
           DRI: ${{ inputs.DRI }}
           GH_TOKEN: "updateMe" 
         run: |
