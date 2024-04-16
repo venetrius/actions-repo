@@ -48,8 +48,8 @@ jobs:
         env:
           minorVersion: ${{ inputs.version }}
           releaseDate: ${{ inputs.date }}
+        shell: bash
         run: |
-          #!/bin/bash
           # expected env vars: 
           # minorVersion 'The version of the alpha release'
           # releaseDate 'The release date'
