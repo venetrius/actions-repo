@@ -44,11 +44,103 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           path: camunda-docs-static
           ref: ${{ inputs.ref }} # github.job_workflow_sha seems to be the documented parameter to resolve this, but doesn't
+      - name: Update Download Page
+        env:
+          minorVersion: ${{ inputs.version }}
+          releaseDate: ${{ inputs.date }}
+        run: |
+          #!/bin/bash
+          # expected env vars: 
+          # minorVersion 'The version of the alpha release'
+          # releaseDate 'The release date'
+          
+          minorVersion=$(echo $nextVersion | cut -c1-4)
+          branchVar="    - branch: \"$minorVersion\""
+          header="    - branch: \"$minorVersion\"
+                releases:
+          "
+          
+          if [[ "$input_content" == *"$branchVar"* ]]; then
+            echo "this is a problem!"
+            lineNumber=$(grep -n -m1 "releases:" $filePath | cut -d: -f1)
+            header=""
+          else
+            lineNumber=$(grep -n -m1 'branches:' $filePath | cut -d: -f1)
+          fi
+          
+          filePath="$GITHUB_WORKSPACE/camunda-docs-static/enterprise/content/download.md"
+          input_content=$(<"$filePath")
+          extracted_section=$(echo "$input_content" | awk '/releases:/{flag=1; next} flag && /^$/ {exit} flag')
+          
+          # White spaces are important for indentation
+          number="       - number: \"$nextVersion\""
+          note="          note: \"https://github.com/camunda/camunda-bpm-platform/issues?q=is%3Aissue+is%3Aclosed+label%3Aversion%3A$nextVersion\""
+          date="          date: \"$releaseDate\""
+          
+          updated_text=$(echo "$extracted_section" | sed "s@.*note: .*@$note@g" | sed "s@.*number: .*@$number@g" | sed "s@.*date: .*@$date@g")
+          
+          temp_file=$(mktemp)
+          printf "$header $updated_text \n\n" > "$temp_file"
+          
+          # to run on mac: sed -i "" "${lineNumber}r $temp_file" "$filePath"
+          sed -i "${lineNumber}r $temp_file" "$filePath"
+          rm "$temp_file"
       - name: Update Download Page and Create PR for alpha release
-        id: release-create-pr
-        uses: camunda/automation-platform-github-actions/release-update-download-page@innovation-week-alpha-update-download-page
-        with:
-          version: ${{ inputs.version }}
-          date: ${{ inputs.date }}
+        env:
+          GITHUB_WORKSPACE: ${{GITHUB_WORKSPACE}}
           DRI: ${{ inputs.DRI }}
-          GITHUB_TOKEN: "updateMe" # ${{ steps.generate-github-token.outputs.token }}
+          GH_TOKEN: "updateMe" 
+        run: |
+          #!/bin/bash
+          # expected env vars: 
+          # GITHUB_WORKSPACE 'The github workplace'
+          # GH_TOKEN 'Personal access token used by github cli'
+          # DRI 'DRI of the release'
+
+          BRANCH_NAME="update-docs-for-alpha-release"
+          REPO_DIR=$GITHUB_WORKSPACE"camunda-docs-static"
+
+          cd $REPO_DIR
+          if [ "$(pwd)" != "$REPO_DIR" ]; then
+              echo "Error: Failed to change to correct directory. Exiting."
+              exit 1
+          fi
+
+          # Create a new feature branch, commit and push
+          git checkout -b $BRANCH_NAME
+          git add .
+          git commit -m "chore(release): update download page for alpha release"
+
+          # Check if the current branch is correct
+          current_branch=$(git branch --show-current)
+
+          if [[ "$current_branch" == "$BRANCH_NAME" ]]; then
+              echo "Branch check passed, pushing to $BRANCH_NAME..."
+              if git push --set-upstream origin $BRANCH_NAME
+              then
+                  echo "git push succeeded"
+              else
+                  echo "git push failed. Exiting."
+                  exit 1
+              fi    
+          else
+              echo "Error: Was not able to check out new branch $BRANCH_NAME. Exiting."
+              exit 1
+          fi
+
+          # create a pull request
+          gh pr create \
+            --body "Please review the changes for the alpha release documentation." \
+            --title "chore(release): update download page for alpha release" \
+            --head "$BRANCH_NAME" \
+            --base "master" \
+            --assignee "$DRI" \
+            --reviewer "$DRI"
+
+          # Capture the exit status of the GitHub CLI command
+          exit_status=$?
+          if [ $exit_status -eq 0 ]; then
+              echo "Pull request created successfully."
+          else
+              echo "Failed to create pull request. Exit status: $exit_status"
+          fi

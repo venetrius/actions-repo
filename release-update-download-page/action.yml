@@ -14,12 +14,12 @@ inputs:
     description: 'Github Token'
     required: true
 runs:
-  - name: Update Download ReadME
-    env:
-      minorVersion: ${{ input.version }}
-      releaseDate: ${{ inputs.date }}
-    run: ./update-docs.sh
-  - name: Create pull-request
+  # - name: Update Download ReadME
+  #   env:
+  #     minorVersion: ${{ input.version }}
+  #     releaseDate: ${{ inputs.date }}
+  #   run: ./update-docs.sh
+  # - name: Create pull-request
     env:
       GITHUB_WORKSPACE: ${{GITHUB_WORKSPACE}}
       DRI: ${{ inputs.DRI }}
