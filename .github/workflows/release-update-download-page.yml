@@ -60,7 +60,8 @@ jobs:
           header="    - branch: \"$minorVersion\"
                 releases:
           "
-          
+          filePath="$GITHUB_WORKSPACE/camunda-docs-static/enterprise/content/download.md"
+
           if [[ "$input_content" == *"$branchVar"* ]]; then
             echo "this is a problem!"
             lineNumber=$(grep -n -m1 "releases:" $filePath | cut -d: -f1)
@@ -69,7 +70,6 @@ jobs:
             lineNumber=$(grep -n -m1 'branches:' $filePath | cut -d: -f1)
           fi
           
-          filePath="$GITHUB_WORKSPACE/camunda-docs-static/enterprise/content/download.md"
           echo $(grep "node:" $filePath)
           input_content=$(cat "$filePath")
           extracted_section=$(echo "$input_content" | awk '/releases:/{flag=1; next} flag && /^$/ {exit} flag')
