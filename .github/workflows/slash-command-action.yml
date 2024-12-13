@@ -1,0 +1,18 @@
+name: Test slash command
+
+on:
+  issues:
+    types:
+      - closed
+  issue_comment:
+    types: [ created ]
+
+jobs:
+  call-reusable-flow:
+    if: >
+      (github.event_name == 'issues' && github.event.action == 'closed') ||
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '/set-version-labels'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print message
+        run: echo "hello"
