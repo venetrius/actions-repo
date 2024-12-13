@@ -12,7 +12,5 @@ jobs:
     if: >
       (github.event_name == 'issues' && github.event.action == 'closed') ||
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '/run-print-command'))
-    runs-on: ubuntu-latest
-    steps:
-      - name: Print message
-        run: echo "hello"
+    uses: venetrius/docs-repo/.github/workflows/action.yml@main          
+    secrets: inherit
